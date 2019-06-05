@@ -78,15 +78,25 @@ io.on('connection', socket => {
   socket.on("chalenge-accepted",(data)=>{
     const {from, to} = data;
     const toSocketID = getUserSocketID(logedUserArr,to);
-    io.to(`${toSocketID}`).emit("chalenge-accepted",{from:data.from})
+    io.to(`${toSocketID}`).emit("chalenge-accepted",{from:data.from, to:data.to})
   })
   socket.on("chalenge-denied",(data)=>{
     const {from, to} = data;
     const toSocketID = getUserSocketID(logedUserArr,to);
 
-    io.to(`${toSocketID}`).emit("chalenge-denied",{from:data.from})
+    io.to(`${toSocketID}`).emit("chalenge-denied",{from:data.from,to:data.to})
   })
-  
+  socket.on("initial-castle",(data)=>{
+    const {username, enemy} = data
+    const toSocketID =getUserSocketID(logedUserArr,enemy);
+    io.to(`${toSocketID}`).emit("initial-castle",data);
+  })
+
+  socket.on("attack",(data)=>{
+    const {to} =data;
+    const toSocketID =getUserSocketID(logedUserArr,to);
+    io.to(`${toSocketID}`).emit("attack",data);
+  })
 
   socket.on('disconnect', () => {
     console.log('user disconnected')
